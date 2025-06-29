@@ -13,7 +13,7 @@ export const userAuth = async (req, res, next)=>{
             // add the userID with the value of token decode in the body
             req.body.userId = tokenDecode.id;
         }else{
-        res.status(500).json({message: 'Not Authorized'})
+            res.status(500).json({message: 'Not Authorized'})
         }
         next()
     } catch (error) {

@@ -1,0 +1,28 @@
+@import 'tailwindcss';
+
+
+
+@layer components{
+  .max-container{
+    max-width: 1440px;
+    margin: 0 auto
+  }
+
+  .padding-x{
+    @apply px-8 sm:px-16
+  }
+
+  .padding-y{
+    @apply py-8 sm:py-16
+  }
+}
+
+@layer utilities{
+  .flex-center{
+    @apply flex justify-center items-center;
+  }
+
+  .flex-col-center{
+    @apply flex flex-col justify-center items-center;
+  }
+}
