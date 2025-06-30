@@ -6,18 +6,27 @@ import { useMutation } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import axios from '../lib/axios.js'
 import {Formik, Form} from 'formik'
+import CustomInput from '../components/CustomInput.jsx'
+import { registerSchema } from '../config/schemas/registerSchema.js'
 const LoginPage = () => {
 
   const [isLoginPage, setIsLoginPage] =useState(true);
 
 
   const registerMutation = useMutation({
-    mutationFn: async ()=>{
+    mutationFn: async (values )=>{
 
+        try { 
+          const res = await axios.post('/auth/register', values)
+          console.log('Submitting');
+          toast.success('Congratulations! You are now register!')
+        } catch (error) {
+            console.log('Error register Mutation', error)
+            toast.error(error.response.data.message)
+            console.log(`Error Status: ${error.response.status} ${error.response.statusText}`)
+        }
     },
-    onSuccess: ()=>{
 
-    }
   })
   
   return (
@@ -29,36 +38,39 @@ const LoginPage = () => {
             <h2 className='text-3xl font-semibold text-white text-center mb-3'>{isLoginPage ? 'Login Account' : 'Create Account'}</h2>
             <p className='text-center text-sm mb-6'>{isLoginPage ? 'Login your account' : 'Create your account'}</p>
 
-            <form>
-
-                {!isLoginPage && 
-                <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]'>
-                    <img src={assets.person_icon} alt="Person Icon" />
-                    <input type="text" placeholder='Fullname' required className='bg-transparent outline-none'/>
-                </div>
-                }
-
-                <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]'>
-                    <img src={assets.mail_icon} alt="Email Icon" />
-                    <input type="text" placeholder='Email' required className='bg-transparent outline-none'/>
-                </div>
+            <Formik 
+            initialValues={{name:'', email:'', password:''}} 
 
 
-                <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]'>
-                    <img src={assets.lock_icon} alt="Lock Icon" />
-                    <input type="text" placeholder='Password' required className='bg-transparent outline-none'/>
-                </div>
-         
-                {isLoginPage && 
-                <div className='mb-4'>
+            validationSchema={!isLoginPage && registerSchema} 
+            onSubmit={(values, actions)=>{
+              if(isLoginPage){
+                  console.log(values);
+                  console.log(actions);
+                  toast.success('wewe')
+              }else{
+                registerMutation.mutate(values)
+              }
 
-                <Link to={'/verify-email'} className='text-indigo-500 cursor-pointer'>Forgot password?</Link>
-                </div>
-                }
+            }}>
 
-                <button className='cursor-pointer w-full py-2.5 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-900 text-white font-medium'>{isLoginPage ? 'Login' : 'Sign Up' }</button>
-            
-            </form>
+              {() =>
+
+                <Form>
+                    {!isLoginPage && 
+                      <CustomInput imgUrl={assets.person_icon} type="text" name="name" placeholder="Name"/>
+                    }
+                    <CustomInput imgUrl={assets.mail_icon} type="text" name="email" placeholder="Email"/>
+                    <CustomInput imgUrl={assets.lock_icon} type="password" name="password" placeholder="Password"/>
+                    {isLoginPage && 
+                    <div className='mb-4'>
+                    <Link to={'/verify-email'} className='text-indigo-500 cursor-pointer'>Forgot password?</Link>
+                    </div>
+                    }
+                    <button type='submit' disabled={registerMutation.isPending} className={`cursor-pointer w-full py-2.5 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-900 text-white font-medium ${registerMutation.isPending ? 'opacity-70' : ''}`}>{isLoginPage ? 'Login' : 'Sign Up' }</button>
+                </Form>
+              }
+            </Formik>
 
             {!isLoginPage && 
             <p className='text-gray-400 text-center text-xs mt-4'>Already have an account? {' '}
@@ -68,7 +80,7 @@ const LoginPage = () => {
 
             {isLoginPage && 
             <p className='text-gray-400 text-center text-xs mt-4'>Don't have an account? {' '}
-              <button onClick={()=> setIsLoginPage(!isLoginPage)}><span className='text-blue-400 cursor-pointer underline'>Sign Up</span></button>
+              <button onClick={()=> setIsLoginPage(!isLoginPage)} ><span className="text-blue-400 cursor-pointer underline }">Sign Up</span></button>
             </p>
             }
         </div>
