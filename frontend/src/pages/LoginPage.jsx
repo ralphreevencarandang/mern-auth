@@ -8,17 +8,36 @@ import axios from '../lib/axios.js'
 import {Formik, Form} from 'formik'
 import CustomInput from '../components/CustomInput.jsx'
 import { registerSchema } from '../config/schemas/registerSchema.js'
+import { useNavigate } from 'react-router'
+import { useCheckAuth } from '../hooks/useCheckAuth.jsx'
+import { useQuery } from '@tanstack/react-query'
 const LoginPage = () => {
 
   const [isLoginPage, setIsLoginPage] =useState(true);
+  const navigate = useNavigate();
+  const {isLoggedIn, setIsLoggedIn} = useCheckAuth();
 
+  
+  // const {data, isPending} = useQuery({
+  //   queryKey: ['users'],
+  //   queryFn: async ()=>{
+  //     try {
+  //       const res = await axios.get('/users')
+  //       console.log(res.data);
+  //     } catch (error) {
+  //       console.log('Error fetch user', error);
+  //     }
+  //   },
+  //   enabled: isLoggedIn
+  // })
+  
 
   const registerMutation = useMutation({
     mutationFn: async (values )=>{
-
         try { 
           const res = await axios.post('/auth/register', values)
           console.log('Submitting');
+          setIsLoginPage(!isLoginPage)
           toast.success('Congratulations! You are now register!')
         } catch (error) {
             console.log('Error register Mutation', error)
@@ -26,8 +45,27 @@ const LoginPage = () => {
             console.log(`Error Status: ${error.response.status} ${error.response.statusText}`)
         }
     },
-
   })
+
+  const loginMutation = useMutation({
+    mutationFn: async(values)=>{
+      try {
+
+        const res = await axios.post('/auth/login', values);  
+        setIsLoggedIn(true)
+        // navigate('/')
+        console.log('Login:', isLoggedIn);
+        toast.success('Successully Login! ')
+
+      } catch (error) {
+        console.log('Error in login mutation', error);
+        toast.error(error.response.data.message)
+        console.log(`Error Status: ${error.response.status} ${error.response.statusText}`)
+      }
+    }
+  })
+
+
   
   return (
     <div className='flex-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 to-purple-400'>
@@ -45,11 +83,14 @@ const LoginPage = () => {
             validationSchema={!isLoginPage && registerSchema} 
             onSubmit={(values, actions)=>{
               if(isLoginPage){
-                  console.log(values);
-                  console.log(actions);
-                  toast.success('wewe')
+                 loginMutation.mutate({
+                    email: values.email,
+                    password: values.password
+                 })
               }else{
-                registerMutation.mutate(values)
+                  registerMutation.mutate(values)
+                  actions.resetForm();
+
               }
 
             }}>
@@ -58,16 +99,17 @@ const LoginPage = () => {
 
                 <Form>
                     {!isLoginPage && 
-                      <CustomInput imgUrl={assets.person_icon} type="text" name="name" placeholder="Name"/>
+                      <CustomInput imgUrl={assets.person_icon} alt={'Person Icon'} type="text" name="name" placeholder="Name" isLoginPage={isLoginPage}/>
                     }
-                    <CustomInput imgUrl={assets.mail_icon} type="text" name="email" placeholder="Email"/>
-                    <CustomInput imgUrl={assets.lock_icon} type="password" name="password" placeholder="Password"/>
+                    <CustomInput imgUrl={assets.mail_icon} alt={'Email Icon'} type="text" name="email" placeholder="Email" isLoginPage={isLoginPage}/>
+                    <CustomInput imgUrl={assets.lock_icon} alt={'Password Icon'} type="password" name="password" placeholder="Password" isLoginPage={isLoginPage}/>
+
                     {isLoginPage && 
                     <div className='mb-4'>
                     <Link to={'/verify-email'} className='text-indigo-500 cursor-pointer'>Forgot password?</Link>
                     </div>
                     }
-                    <button type='submit' disabled={registerMutation.isPending} className={`cursor-pointer w-full py-2.5 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-900 text-white font-medium ${registerMutation.isPending ? 'opacity-70' : ''}`}>{isLoginPage ? 'Login' : 'Sign Up' }</button>
+                    <button type='submit' disabled={registerMutation.isPending || loginMutation.isPending} className={`cursor-pointer w-full py-2.5 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-900 text-white font-medium ${registerMutation.isPending ? 'opacity-70' : ''}`}>{isLoginPage ? 'Login' : 'Sign Up' }</button>
                 </Form>
               }
             </Formik>
