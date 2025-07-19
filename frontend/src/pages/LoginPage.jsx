@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { assets } from '../assets/assets.js'
 import { Link } from 'react-router'
 import { useState } from 'react'
@@ -9,28 +9,18 @@ import {Formik, Form} from 'formik'
 import CustomInput from '../components/CustomInput.jsx'
 import { registerSchema } from '../config/schemas/registerSchema.js'
 import { useNavigate } from 'react-router'
-import { useCheckAuth } from '../hooks/useCheckAuth.jsx'
-import { useQuery } from '@tanstack/react-query'
+import { AppContent } from '../context/AppContext.jsx'
+
 const LoginPage = () => {
 
   const [isLoginPage, setIsLoginPage] =useState(true);
   const navigate = useNavigate();
-  const {isLoggedIn, setIsLoggedIn} = useCheckAuth();
+  const { setIsLoggedIn,getUserData} = useContext(AppContent)
+       
 
-  
-  // const {data, isPending} = useQuery({
-  //   queryKey: ['users'],
-  //   queryFn: async ()=>{
-  //     try {
-  //       const res = await axios.get('/users')
-  //       console.log(res.data);
-  //     } catch (error) {
-  //       console.log('Error fetch user', error);
-  //     }
-  //   },
-  //   enabled: isLoggedIn
-  // })
-  
+   
+       
+
 
   const registerMutation = useMutation({
     mutationFn: async (values )=>{
@@ -50,12 +40,12 @@ const LoginPage = () => {
   const loginMutation = useMutation({
     mutationFn: async(values)=>{
       try {
-
+        axios.defaults.withCredentials=true
         const res = await axios.post('/auth/login', values);  
         setIsLoggedIn(true)
-        // navigate('/')
-        console.log('Login:', isLoggedIn);
         toast.success('Successully Login! ')
+        getUserData()
+        navigate('/')
 
       } catch (error) {
         console.log('Error in login mutation', error);

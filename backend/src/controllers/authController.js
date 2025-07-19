@@ -14,6 +14,7 @@ export const register = async (req, res)=>{
         if(existingUser){
             return res.status(500).json({message: 'Email already exists'})
         }
+
         const hashedPassword = await bcrypt.hash(password, 10)
         const user = new User({name, email, password: hashedPassword})
 
@@ -40,7 +41,6 @@ export const register = async (req, res)=>{
             to: email,
             subject: "Account Registration",
             text: `Welcome ${name} to MERN Auth website. Your account has successfully registered with email id: ${email}`, // plain‑text body
-       
         })
 
 
@@ -73,7 +73,7 @@ export const login = async (req, res)=>{
             httpOnly: true,  
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-            maxAge: 1 * 24 * 60 * 60 * 10000
+            maxAge:  1 * 24 * 60 * 60 * 1000
         })
         res.status(200).json({message: 'Login successfully'})
         

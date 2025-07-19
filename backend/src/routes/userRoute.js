@@ -3,6 +3,6 @@ import {getUserData} from '../controllers/userController.js'
 import { userAuth } from '../middlewares/userAuth.js';
 const router = express.Router();
 
-router.get('/users', userAuth ,getUserData)
+router.post('/users', userAuth ,getUserData)
 
 export default router
