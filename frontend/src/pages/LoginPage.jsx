@@ -40,7 +40,7 @@ const LoginPage = () => {
   const loginMutation = useMutation({
     mutationFn: async(values)=>{
       try {
-        axios.defaults.withCredentials=true
+      
         const res = await axios.post('/auth/login', values);  
         setIsLoggedIn(true)
         toast.success('Successully Login! ')
