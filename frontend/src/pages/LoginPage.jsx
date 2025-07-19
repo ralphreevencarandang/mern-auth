@@ -100,7 +100,9 @@ const LoginPage = () => {
                     <Link to={'/reset-password'} className='text-indigo-500 cursor-pointer'>Forgot password?</Link>
                     </div>
                     }
-                    <button type='submit' disabled={registerMutation.isPending || loginMutation.isPending} className={`cursor-pointer w-full py-2.5 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-900 text-white font-medium ${registerMutation.isPending ? 'opacity-70' : ''}`}>{isLoginPage ? 'Login' : 'Sign Up' }</button>
+                    <button type='submit' disabled={registerMutation.isPending || loginMutation.isPending} className={`cursor-pointer w-full py-2.5 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-900 text-white font-medium ${registerMutation.isPending ? 'opacity-70' : ''}`}>
+                      {isLoginPage ? (loginMutation.isPending ? 'Logging in...' : 'Login') : (registerMutation.isPending ? 'Signing up...' : 'Sign up') }
+                      </button>
                 </Form>
               }
             </Formik>
