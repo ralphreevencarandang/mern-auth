@@ -149,7 +149,7 @@ export const verifyEmail = async (req, res)=>{
         user.verifyOtp = '';
         user.verifyOtpExpireAt = 0;
         await user.save();
-        res.status(200).json({message: 'Congratulations! Your account is now verified'})
+        return res.status(200).json({message: 'Congratulations! Your account is now verified'})
     } catch (error) {
         console.log('Error Verify Email Controller', error);
         res.status(500).json({message: 'Internal server error'})
@@ -160,7 +160,10 @@ export const verifyEmail = async (req, res)=>{
 // Check if the user is already login or not
 export const isAuthenticated = async (req, res) =>{
     try {
-       return  res.status(200).json({message: 'Authenticated'})
+       return  res.status(200).json({ 
+                success: true,
+                message: 'Authenticated',
+                userId: req.body.userId })
     } catch (error) {
          console.log('Error is Authenticated Controller', error);
         res.status(500).json({message: 'Internal server error'})

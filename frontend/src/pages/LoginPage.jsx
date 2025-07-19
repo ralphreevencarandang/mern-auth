@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { assets } from '../assets/assets.js'
 import { Link } from 'react-router'
 import { useState } from 'react'
@@ -56,6 +56,7 @@ const LoginPage = () => {
   })
 
 
+
   
   return (
     <div className='flex-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 to-purple-400'>
@@ -96,7 +97,7 @@ const LoginPage = () => {
 
                     {isLoginPage && 
                     <div className='mb-4'>
-                    <Link to={'/verify-email'} className='text-indigo-500 cursor-pointer'>Forgot password?</Link>
+                    <Link to={'/reset-password'} className='text-indigo-500 cursor-pointer'>Forgot password?</Link>
                     </div>
                     }
                     <button type='submit' disabled={registerMutation.isPending || loginMutation.isPending} className={`cursor-pointer w-full py-2.5 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-900 text-white font-medium ${registerMutation.isPending ? 'opacity-70' : ''}`}>{isLoginPage ? 'Login' : 'Sign Up' }</button>

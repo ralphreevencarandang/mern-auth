@@ -11,9 +11,13 @@ const PORT = process.env.PORT || 5001
 await connectDB();
 app.use(express.json())
 app.use(cors({
+    // Kung sinong frontend lang ang pwedeng makaaccess ng backend mo it can be an array
     origin: 'http://localhost:5173',
+    // Credentials true pag gumagamit ka ng cookies and also use cookieparser middlware
     credentials: true,
+    // allow mo yung mga methods na pwedeng gamitin ng frontend
     methods: ['GET', 'POST','PUT','DELETE', 'OPTIONS'],
+    // allowedheaders kase json format yung nir-return na value natin
     allowedHeaders: ['Content-Type'],
 }))
 app.use(cookieParser())
