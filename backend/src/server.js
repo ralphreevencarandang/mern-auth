@@ -12,7 +12,7 @@ await connectDB();
 app.use(express.json())
 app.use(cors({
     // Kung sinong frontend lang ang pwedeng makaaccess ng backend mo it can be an array
-    origin:  ['http://localhost:5173'],
+    origin:  ['http://localhost:5173','https://mern-auth-pi-seven.vercel.app/'],
     // Credentials true pag gumagamit ka ng cookies and also use cookieparser middlware
     credentials: true,
     // allow mo yung mga methods na pwedeng gamitin ng frontend
